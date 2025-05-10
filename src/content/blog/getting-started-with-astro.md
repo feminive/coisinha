@@ -1,6 +1,6 @@
 ---
 title: 'Getting Started with Astro: The Modern Web Framework'
-description: 'A beginner-friendly introduction to Astro, explaining why it's gaining popularity and how to create your first Astro project.'
+description: 'A beginner-friendly introduction to Astro, explaining why its gaining popularity and how to create your first Astro project.'
 pubDate: '2024-05-20'
 heroImage: 'https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 category: 'Frameworks'
