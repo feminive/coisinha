@@ -1,0 +1,37 @@
+---
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: Array<{
+    slug: string;
+    data: {
+      title: string;
+      description: string;
+      pubDate: Date;
+      updatedDate?: Date;
+      heroImage?: string;
+      category?: string;
+      tags?: string[];
+      readingTime?: string;
+    };
+  }>;
+  featuredPost?: boolean;
+}
+
+const { posts, featuredPost = true } = Astro.props;
+---
+
+<div class="space-y-12">
+  {posts.length > 0 && featuredPost && (
+    <PostCard post={posts[0]} featured={true} />
+  )}
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    {posts
+      .slice(featuredPost ? 1 : 0)
+      .map((post) => (
+        <PostCard post={post} />
+      ))
+    }
+  </div>
+</div>

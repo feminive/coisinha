@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import readingTime from 'reading-time';
+import Layout from '../../layouts/Layout.astro';
+import PostsList from '../../components/PostsList.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog', ({ data }) => {
+    return !data.draft;
+  });
+  
+  // Get all unique tags
+  const tags = [...new Set(blogEntries.flatMap(post => post.data.tags || []))];
+  
+  return tags.map(tag => ({
+    params: { tag: tag.toLowerCase() },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const blogEntries = await getCollection('blog', ({ data }) => {
+  return !data.draft && data.tags && data.tags.some(t => t.toLowerCase() === tag.toLowerCase());
+});
+
+// Sort by publication date, newest first
+const sortedEntries = blogEntries
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map(post => {
+    const stats = readingTime(post.body);
+    return {
+      ...post,
+      data: {
+        ...post.data,
+        readingTime: stats.text
+      }
+    };
+  });
+
+// Get related tags
+const relatedTags = [...new Set(sortedEntries.flatMap(post => 
+  post.data.tags?.filter(t => t.toLowerCase() !== tag.toLowerCase()) || []
+))].slice(0, 10);
+---
+
+<Layout title={`#${tag} | MinimalBlog`}>
+  <div class="space-y-10">
+    <div class="space-y-4">
+      <h1 class="text-3xl md:text-4xl font-bold">Tag: #{tag}</h1>
+      <p class="text-gray-600 dark:text-gray-400 max-w-2xl">
+        Browse articles tagged with #{tag}. Showing {sortedEntries.length} article{sortedEntries.length !== 1 ? 's' : ''}.
+      </p>
+    </div>
+    
+    {relatedTags.length > 0 && (
+      <div>
+        <h2 class="font-medium mb-3">Related Tags</h2>
+        <div class="flex flex-wrap gap-2">
+          {relatedTags.map(relatedTag => (
+            <a 
+              href={`/tags/${relatedTag.toLowerCase()}`}
+              class="text-sm px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors duration-300"
+            >
+              #{relatedTag}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    {sortedEntries.length > 0 ? (
+      <PostsList posts={sortedEntries} featuredPost={false} />
+    ) : (
+      <div class="text-center py-16">
+        <h2 class="text-xl font-medium mb-2">No articles found</h2>
+        <p class="text-gray-600 dark:text-gray-400">
+          There are no articles with this tag yet. Check back later!
+        </p>
+      </div>
+    )}
+  </div>
+</Layout>

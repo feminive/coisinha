@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Categories from '../../components/Categories.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Get categories with counts
+const categoriesWithCounts = allPosts.reduce((acc, post) => {
+  if (post.data.category) {
+    acc[post.data.category] = (acc[post.data.category] || 0) + 1;
+  }
+  return acc;
+}, {});
+
+// Get posts by category for display
+const postsByCategory = {};
+allPosts.forEach(post => {
+  if (post.data.category) {
+    if (!postsByCategory[post.data.category]) {
+      postsByCategory[post.data.category] = [];
+    }
+    postsByCategory[post.data.category].push(post);
+  }
+});
+
+// Sort categories by count
+const sortedCategories = Object.entries(categoriesWithCounts)
+  .sort(([, countA], [, countB]) => countB - countA);
+---
+
+<Layout title="Categories | MinimalBlog">
+  <div class="space-y-10">
+    <div class="space-y-4">
+      <h1 class="text-3xl md:text-4xl font-bold">Categories</h1>
+      <p class="text-gray-600 dark:text-gray-400 max-w-2xl">
+        Browse articles by category to find content that interests you most.
+      </p>
+    </div>
+    
+    <Categories categories={categoriesWithCounts} />
+    
+    <div class="space-y-12">
+      {sortedCategories.map(([category, count]) => (
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold">{category}</h2>
+            <a 
+              href={`/categories/${category.toLowerCase()}`}
+              class="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+            >
+              View all {count} article{count !== 1 ? 's' : ''} →
+            </a>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {postsByCategory[category]
+              .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+              .slice(0, 2)
+              .map(post => (
+                <div class="group">
+                  <a href={`/blog/${post.slug}/`} class="block overflow-hidden rounded-lg mb-3">
+                    <img 
+                      src={post.data.heroImage || "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} 
+                      alt={post.data.title} 
+                      class="h-48 w-full object-cover transition-all duration-300 group-hover:scale-105"
+                      width="400"
+                      height="200"
+                    />
+                  </a>
+                  <h3 class="font-medium mb-1 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+                  </h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {post.data.description}
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

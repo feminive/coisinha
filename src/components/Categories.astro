@@ -1,0 +1,38 @@
+---
+interface Props {
+  categories: {
+    [key: string]: number;
+  };
+  activeCategory?: string;
+}
+
+const { categories, activeCategory } = Astro.props;
+const sortedCategories = Object.entries(categories)
+  .sort(([, countA], [, countB]) => countB - countA);
+---
+
+<div class="flex flex-wrap gap-2">
+  <a
+    href="/categories"
+    class={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
+      !activeCategory 
+        ? 'bg-primary-600 text-white hover:bg-primary-700' 
+        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+    }`}
+  >
+    All
+  </a>
+  
+  {sortedCategories.map(([category, count]) => (
+    <a
+      href={`/categories/${category.toLowerCase()}`}
+      class={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
+        activeCategory === category.toLowerCase() 
+          ? 'bg-primary-600 text-white hover:bg-primary-700' 
+          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+      }`}
+    >
+      {category} <span class="text-xs opacity-70">({count})</span>
+    </a>
+  ))}
+</div>

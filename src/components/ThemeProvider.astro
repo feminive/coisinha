@@ -1,0 +1,58 @@
+<script>
+  // Initialize theme from localStorage or system preference
+  const getInitialTheme = () => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  };
+
+  const getInitialColorTheme = () => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('color-theme')) {
+      return localStorage.getItem('color-theme');
+    }
+    return 'default'; // blue is default
+  };
+
+  const theme = getInitialTheme();
+  const colorTheme = getInitialColorTheme();
+
+  // Apply the theme and color theme
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+
+  if (colorTheme !== 'default') {
+    document.documentElement.classList.add(`theme-${colorTheme}`);
+  }
+
+  // Make theme data available to other scripts
+  window.theme = { 
+    current: theme,
+    colorTheme: colorTheme,
+    setTheme: (value) => {
+      localStorage.setItem('theme', value);
+      if (value === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      window.theme.current = value;
+    },
+    setColorTheme: (value) => {
+      // Remove all theme classes first
+      document.documentElement.classList.remove('theme-purple', 'theme-green', 'theme-red');
+      
+      localStorage.setItem('color-theme', value);
+      if (value !== 'default') {
+        document.documentElement.classList.add(`theme-${value}`);
+      }
+      window.theme.colorTheme = value;
+    }
+  };
+</script>

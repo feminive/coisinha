@@ -1,0 +1,28 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import ThemeSelector from './ThemeSelector.astro';
+---
+
+<header class="py-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <a href="/" class="text-2xl font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:text-primary-700 dark:hover:text-primary-300">
+      Minimal<span class="text-accent-500">Blog</span>
+    </a>
+  </div>
+  
+  <nav class="flex items-center space-x-6">
+    <a href="/blog" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
+      Blog
+    </a>
+    <a href="/categories" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
+      Categories
+    </a>
+    <a href="/about" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
+      About
+    </a>
+    <div class="flex items-center gap-4">
+      <ThemeSelector />
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>

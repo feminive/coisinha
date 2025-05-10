@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import readingTime from 'reading-time';
+import BlogPost from '../../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog', ({ data }) => {
+    return !data.draft;
+  });
+  
+  // For each blog post, find other posts in the same category for the "related posts" section
+  return blogEntries.map(entry => {
+    const otherPosts = blogEntries
+      .filter(post => 
+        post.slug !== entry.slug && 
+        (post.data.category === entry.data.category || 
+         (post.data.tags && entry.data.tags && 
+          post.data.tags.some(tag => entry.data.tags.includes(tag))))
+      )
+      .sort(() => Math.random() - 0.5) // Randomly sort to get different related posts
+      .slice(0, 2); // Limit to 2 related posts
+    
+    return {
+      params: { slug: entry.slug },
+      props: { entry, otherPosts },
+    };
+  });
+}
+
+const { entry, otherPosts } = Astro.props;
+const { Content } = await entry.render();
+
+// Calculate reading time
+const stats = readingTime(entry.body);
+---
+
+<BlogPost {...entry.data} readingTime={stats.text} otherPosts={otherPosts}>
+  <Content />
+</BlogPost>
