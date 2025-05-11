@@ -17,19 +17,30 @@
     return 'default'; // blue is default
   };
 
+  // Function to apply theme
+  const applyTheme = (theme) => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
+  // Function to apply color theme
+  const applyColorTheme = (colorTheme) => {
+    document.documentElement.classList.remove('theme-purple', 'theme-green', 'theme-red');
+    if (colorTheme !== 'default') {
+      document.documentElement.classList.add(`theme-${colorTheme}`);
+    }
+  };
+
+  // Initialize themes
   const theme = getInitialTheme();
   const colorTheme = getInitialColorTheme();
 
-  // Apply the theme and color theme
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-
-  if (colorTheme !== 'default') {
-    document.documentElement.classList.add(`theme-${colorTheme}`);
-  }
+  // Apply themes immediately
+  applyTheme(theme);
+  applyColorTheme(colorTheme);
 
   // Make theme data available to other scripts
   window.theme = { 
@@ -37,22 +48,22 @@
     colorTheme: colorTheme,
     setTheme: (value) => {
       localStorage.setItem('theme', value);
-      if (value === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      applyTheme(value);
       window.theme.current = value;
     },
     setColorTheme: (value) => {
-      // Remove all theme classes first
-      document.documentElement.classList.remove('theme-purple', 'theme-green', 'theme-red');
-      
       localStorage.setItem('color-theme', value);
-      if (value !== 'default') {
-        document.documentElement.classList.add(`theme-${value}`);
-      }
+      applyColorTheme(value);
       window.theme.colorTheme = value;
     }
   };
+
+  // Handle theme changes during navigation
+  document.addEventListener('astro:after-swap', () => {
+    const currentTheme = localStorage.getItem('theme') || theme;
+    const currentColorTheme = localStorage.getItem('color-theme') || colorTheme;
+    
+    applyTheme(currentTheme);
+    applyColorTheme(currentColorTheme);
+  });
 </script>
