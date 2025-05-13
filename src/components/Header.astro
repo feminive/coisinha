@@ -3,7 +3,7 @@ import ThemeToggle from './ThemeToggle.astro';
 import ThemeSelector from './ThemeSelector.astro';
 ---
 
-<header class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-950 z-50 border-b border-gray-200 dark:border-gray-800">
+<header class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-950 z-40 border-b border-gray-200 dark:border-gray-800">
   <nav class="max-w-4xl mx-auto px-4 sm:px-6">
     <div class="flex items-center justify-between h-16">
       <a href="/" class="text-2xl font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:text-primary-700 dark:hover:text-primary-300">
@@ -20,7 +20,7 @@ import ThemeSelector from './ThemeSelector.astro';
         </svg>
       </button>
       
-      <div id="nav-menu" class="hidden md:flex md:items-center absolute md:static top-16 left-0 right-0 bg-white dark:bg-gray-950 md:bg-transparent border-b border-gray-200 dark:border-gray-800 md:border-0 p-4 md:p-0 z-40">
+      <div id="nav-menu" class="hidden md:flex md:items-center absolute md:static top-16 left-0 right-0 bg-white dark:bg-gray-950 md:bg-transparent border-b border-gray-200 dark:border-gray-800 md:border-0 p-4 md:p-0 z-50">
         <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
           <a href="/blog" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
             Blog
@@ -60,17 +60,14 @@ import ThemeSelector from './ThemeSelector.astro';
     }
   };
 
-  // Toggle menu on button click
   mobileMenuButton?.addEventListener('click', toggleMenu);
 
-  // Close menu on navigation
   document.addEventListener('astro:page-load', () => {
     if (isMenuOpen) {
       toggleMenu();
     }
   });
 
-  // Close menu when clicking outside
   document.addEventListener('click', (event) => {
     const target = event.target as Node;
     if (isMenuOpen && !navMenu?.contains(target) && !mobileMenuButton?.contains(target)) {
@@ -78,7 +75,6 @@ import ThemeSelector from './ThemeSelector.astro';
     }
   });
 
-  // Handle window resize
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 768 && isMenuOpen) {
       toggleMenu();
