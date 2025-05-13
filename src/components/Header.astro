@@ -4,13 +4,12 @@ import ThemeSelector from './ThemeSelector.astro';
 ---
 
 <header class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-950 z-50 border-b border-gray-200 dark:border-gray-800">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+  <nav class="max-w-4xl mx-auto px-4 sm:px-6">
     <div class="flex items-center justify-between h-16">
       <a href="/" class="text-2xl font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:text-primary-700 dark:hover:text-primary-300">
         Minimal<span class="text-accent-500">Blog</span>
       </a>
       
-      <!-- Mobile menu button -->
       <button
         id="mobile-menu-button"
         class="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
@@ -21,8 +20,7 @@ import ThemeSelector from './ThemeSelector.astro';
         </svg>
       </button>
       
-      <!-- Navigation -->
-      <nav id="nav-menu" class="fixed md:relative top-16 left-0 right-0 bg-white dark:bg-gray-950 md:bg-transparent dark:md:bg-transparent border-b border-gray-200 dark:border-gray-800 md:border-0 p-4 md:p-0 hidden md:block transform translate-y-0 transition-transform duration-300">
+      <div id="nav-menu" class="hidden md:flex md:items-center absolute md:static top-16 left-0 right-0 bg-white dark:bg-gray-950 md:bg-transparent border-b border-gray-200 dark:border-gray-800 md:border-0 p-4 md:p-0 z-40">
         <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
           <a href="/blog" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
             Blog
@@ -38,9 +36,9 @@ import ThemeSelector from './ThemeSelector.astro';
             <ThemeToggle />
           </div>
         </div>
-      </nav>
+      </div>
     </div>
-  </div>
+  </nav>
 </header>
 
 <!-- Spacer to prevent content from being hidden under fixed header -->
@@ -55,7 +53,6 @@ import ThemeSelector from './ThemeSelector.astro';
     isMenuOpen = !isMenuOpen;
     navMenu?.classList.toggle('hidden');
     
-    // Update button icon
     if (mobileMenuButton) {
       mobileMenuButton.innerHTML = isMenuOpen
         ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>'
@@ -67,7 +64,7 @@ import ThemeSelector from './ThemeSelector.astro';
   mobileMenuButton?.addEventListener('click', toggleMenu);
 
   // Close menu on navigation
-  document.addEventListener('astro:after-navigation', () => {
+  document.addEventListener('astro:page-load', () => {
     if (isMenuOpen) {
       toggleMenu();
     }
