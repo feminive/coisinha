@@ -4,6 +4,7 @@ import readingTime from 'reading-time';
 import Layout from '../layouts/Layout.astro';
 import PostsList from '../components/PostsList.astro';
 import Categories from '../components/Categories.astro';
+import Newsletter from '../components/Newsletter.astro';
 
 // Get blog posts
 const blogEntries = await getCollection('blog', ({ data }) => {
@@ -87,31 +88,5 @@ const categoriesWithCounts = blogEntries.reduce((acc, post) => {
     <Categories categories={categoriesWithCounts} />
   </section>
   
-  <section class="bg-gray-50 dark:bg-gray-900 -mx-4 sm:-mx-6 px-4 sm:px-6 py-12 rounded-xl">
-    <div class="max-w-3xl mx-auto text-center space-y-4">
-      <h2 class="text-2xl md:text-3xl font-bold">Stay Updated</h2>
-      <p class="text-gray-700 dark:text-gray-300">
-        Subscribe to our newsletter to receive the latest articles and updates.
-      </p>
-      
-      <form class="mt-6 flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-        <input 
-          type="email" 
-          placeholder="Enter your email" 
-          class="flex-grow px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
-          required
-        />
-        <button 
-          type="submit" 
-          class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-300"
-        >
-          Subscribe
-        </button>
-      </form>
-      
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
-        We respect your privacy. Unsubscribe at any time.
-      </p>
-    </div>
-  </section>
+  <Newsletter class="-mx-4 sm:-mx-6" />
 </Layout>
