@@ -8,32 +8,60 @@ export async function getStaticPaths() {
     return !data.draft;
   });
   
-  // For each blog post, find other posts in the same category for the "related posts" section
-  return blogEntries.map(entry => {
-    const otherPosts = blogEntries
+  // Sort all posts by date
+  const sortedEntries = blogEntries.sort((a, b) => 
+    b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+  
+  return sortedEntries.map((entry, index) => {
+    // Find posts in the same category
+    const categoryPosts = sortedEntries.filter(post => 
+      post.data.category === entry.data.category
+    );
+    
+    // Find current post's index in category posts
+    const currentIndex = categoryPosts.findIndex(post => post.slug === entry.slug);
+    
+    // Get previous and next posts from the same category
+    const prevPost = currentIndex < categoryPosts.length - 1 ? categoryPosts[currentIndex + 1] : undefined;
+    const nextPost = currentIndex > 0 ? categoryPosts[currentIndex - 1] : undefined;
+    
+    // Find related posts (same category or tags, excluding current post)
+    const otherPosts = sortedEntries
       .filter(post => 
         post.slug !== entry.slug && 
         (post.data.category === entry.data.category || 
          (post.data.tags && entry.data.tags && 
           post.data.tags.some(tag => entry.data.tags.includes(tag))))
       )
-      .sort(() => Math.random() - 0.5) // Randomly sort to get different related posts
-      .slice(0, 2); // Limit to 2 related posts
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 2);
     
     return {
       params: { slug: entry.slug },
-      props: { entry, otherPosts },
+      props: { 
+        entry,
+        prevPost,
+        nextPost,
+        otherPosts
+      },
     };
   });
 }
 
-const { entry, otherPosts } = Astro.props;
+const { entry, prevPost, nextPost, otherPosts } = Astro.props;
 const { Content } = await entry.render();
 
 // Calculate reading time
 const stats = readingTime(entry.body);
 ---
 
-<BlogPost {...entry.data} readingTime={stats.text} otherPosts={otherPosts}>
+<BlogPost 
+  {...entry.data} 
+  readingTime={stats.text} 
+  otherPosts={otherPosts}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
   <Content />
 </BlogPost>
