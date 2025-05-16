@@ -25,7 +25,7 @@ const blogEntries = await getCollection('blog', ({ data }) => {
 
 // Sort by publication date, newest first
 const sortedEntries = blogEntries
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf())
   .map(post => {
     const stats = readingTime(post.body);
     return {

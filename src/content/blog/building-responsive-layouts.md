@@ -1,8 +1,8 @@
 ---
 title: 'Building Responsive Layouts with Modern CSS'
 description: 'Learn how to create beautiful, responsive layouts using modern CSS techniques like Grid, Flexbox, and CSS Variables.'
-pubDate: '2024-05-10'
-heroImage: 'https://images.pexels.com/photos/196646/pexels-photo-196646.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+published: '2024-05-10'
+image: 'https://images.pexels.com/photos/196646/pexels-photo-196646.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 category: 'CSS'
 tags: ['Web Development', 'CSS', 'Responsive Design', 'Frontend']
 ---

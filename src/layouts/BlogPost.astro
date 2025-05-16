@@ -13,9 +13,9 @@ type Props = CollectionEntry<'blog'>['data'] & {
 const { 
   title, 
   description, 
-  pubDate, 
+  published, 
   updatedDate, 
-  heroImage, 
+  image, 
   category, 
   tags,
   readingTime,
@@ -25,7 +25,7 @@ const {
 } = Astro.props;
 
 const formattedDate = formatDistance(
-  new Date(pubDate),
+  new Date(published),
   new Date(),
   { addSuffix: true }
 );
@@ -36,10 +36,26 @@ const formattedUpdatedDate = updatedDate ? formatDistance(
 ) : null;
 
 const defaultImage = "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
-const image = heroImage || defaultImage;
+const Heroimage = image || defaultImage;
 ---
 
 <Layout title={title} description={description} image={image}>
+  <!-- Barra de progresso de leitura -->
+  <div id="reading-progress-container" class="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 z-50">
+    <div id="reading-progress-bar" class="h-full bg-primary-600 dark:bg-primary-400 w-0 transition-all duration-100"></div>
+  </div>
+
+  <!-- Botão voltar ao topo -->
+  <button 
+    id="back-to-top" 
+    class="fixed bottom-6 right-6 bg-primary-600 dark:bg-primary-800 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 z-40 hover:bg-primary-700 dark:hover:bg-primary-700 focus:outline-none"
+    aria-label="Voltar ao topo"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+
   <article class="mx-auto max-w-3xl">
     <div class="mb-8">
       {category && (
@@ -80,9 +96,9 @@ const image = heroImage || defaultImage;
         </div>
       </div>
       
-      {heroImage && (
+      {image && (
         <img 
-          src={heroImage} 
+          src={image} 
           alt={title} 
           class="w-full h-64 sm:h-96 object-cover rounded-xl mb-8"
           width="1200"
@@ -147,7 +163,7 @@ const image = heroImage || defaultImage;
             <div class="group">
               <a href={`/blog/${post.slug}/`} class="block overflow-hidden rounded-lg mb-3">
                 <img 
-                  src={post.data.heroImage || defaultImage} 
+                  src={post.data.image || defaultImage} 
                   alt={post.data.title} 
                   class="h-48 w-full object-cover transition-all duration-300 group-hover:scale-105"
                   width="400"
@@ -166,4 +182,60 @@ const image = heroImage || defaultImage;
       </div>
     )}
   </article>
+
+  <script>
+    // Função para atualizar a barra de progresso de leitura
+    function updateReadingProgress() {
+      const article = document.querySelector('article');
+      if (!article) return;
+      
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollTop = window.scrollY;
+      
+      // Calcula a porcentagem de rolagem
+      const scrollPercentage = (scrollTop / documentHeight) * 100;
+      
+      // Atualiza a largura da barra de progresso
+      const progressBar = document.getElementById('reading-progress-bar');
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(scrollPercentage, 100)}%`;
+      }
+      
+      // Mostra ou esconde o botão de voltar ao topo
+      const backToTopButton = document.getElementById('back-to-top');
+      if (backToTopButton) {
+        if (scrollTop > 300) {
+          backToTopButton.classList.remove('opacity-0', 'invisible');
+          backToTopButton.classList.add('opacity-100', 'visible');
+        } else {
+          backToTopButton.classList.remove('opacity-100', 'visible');
+          backToTopButton.classList.add('opacity-0', 'invisible');
+        }
+      }
+    }
+    
+    // Função para rolar para o topo da página
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Adiciona os event listeners quando o DOM estiver carregado
+    document.addEventListener('DOMContentLoaded', () => {
+      // Atualiza a barra de progresso quando a página carrega
+      updateReadingProgress();
+      
+      // Atualiza a barra de progresso durante a rolagem
+      window.addEventListener('scroll', updateReadingProgress);
+      
+      // Configura o botão de voltar ao topo
+      const backToTopButton = document.getElementById('back-to-top');
+      if (backToTopButton) {
+        backToTopButton.addEventListener('click', scrollToTop);
+      }
+    });
+  </script>
 </Layout>

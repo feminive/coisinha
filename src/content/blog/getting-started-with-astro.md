@@ -1,8 +1,8 @@
 ---
 title: 'Getting Started with Astro: The Modern Web Framework'
 description: 'A beginner-friendly introduction to Astro, explaining why its gaining popularity and how to create your first Astro project.'
-pubDate: '2024-05-20'
-heroImage: 'https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+published: '2024-05-20'
+image: 'https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 category: 'Frameworks'
 tags: ['Web Development', 'Astro', 'JavaScript', 'Frontend', 'Performance']
 
@@ -165,7 +165,7 @@ export default defineConfig({
 ```markdown
 ---
 title: "Hello, World!"
-pubDate: 2024-05-01
+published: 2024-05-01
 description: "This is my first blog post using Astro."
 author: "Astro Learner"
 image:

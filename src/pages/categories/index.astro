@@ -6,15 +6,15 @@ import Categories from '../../components/Categories.astro';
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 
 // Get categories with counts
-const categoriesWithCounts = allPosts.reduce((acc, post) => {
+const categoriesWithCounts = allPosts.reduce((acc: Record<string, number>, post) => {
   if (post.data.category) {
     acc[post.data.category] = (acc[post.data.category] || 0) + 1;
   }
   return acc;
-}, {});
+}, {} as Record<string, number>);
 
 // Get posts by category for display
-const postsByCategory = {};
+const postsByCategory: Record<string, any[]> = {};
 allPosts.forEach(post => {
   if (post.data.category) {
     if (!postsByCategory[post.data.category]) {
@@ -55,13 +55,13 @@ const sortedCategories = Object.entries(categoriesWithCounts)
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {postsByCategory[category]
-              .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+              .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf())
               .slice(0, 2)
               .map(post => (
                 <div class="group">
                   <a href={`/blog/${post.slug}/`} class="block overflow-hidden rounded-lg mb-3">
                     <img 
-                      src={post.data.heroImage || "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} 
+                      src={post.data.image || "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} 
                       alt={post.data.title} 
                       class="h-48 w-full object-cover transition-all duration-300 group-hover:scale-105"
                       width="400"

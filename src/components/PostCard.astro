@@ -7,9 +7,9 @@ interface Props {
     data: {
       title: string;
       description: string;
-      pubDate: Date;
+      published: Date;
       updatedDate?: Date;
-      heroImage?: string;
+      image?: string;
       category?: string;
       tags?: string[];
       readingTime?: string;
@@ -20,13 +20,13 @@ interface Props {
 
 const { post, featured = false } = Astro.props;
 const formattedDate = formatDistance(
-  new Date(post.data.pubDate),
+  new Date(post.data.published),
   new Date(),
   { addSuffix: true }
 );
 
 const defaultImage = "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
-const image = post.data.heroImage || defaultImage;
+const image = post.data.image || defaultImage;
 ---
 
 <article class={`overflow-hidden ${featured ? 'lg:flex gap-8 items-center' : ''} group`}>

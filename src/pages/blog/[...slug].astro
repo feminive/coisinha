@@ -10,7 +10,7 @@ export async function getStaticPaths() {
   
   // Sort all posts by date
   const sortedEntries = blogEntries.sort((a, b) => 
-    b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+    b.data.published.valueOf() - a.data.published.valueOf()
   );
   
   return sortedEntries.map((entry, index) => {

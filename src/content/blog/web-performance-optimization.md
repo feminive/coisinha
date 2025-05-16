@@ -1,8 +1,8 @@
 ---
 title: 'Web Performance Optimization Techniques for 2024'
 description: 'Learn the latest strategies and best practices for optimizing web performance to improve user experience and search engine rankings.'
-pubDate: '2024-05-08'
-heroImage: 'https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+published: '2024-05-08'
+image: 'https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 category: 'Performance'
 tags: ['Web Development', 'Performance', 'Optimization', 'Frontend', 'SEO']
 ---

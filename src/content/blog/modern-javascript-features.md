@@ -1,8 +1,8 @@
 ---
 title: 'Modern JavaScript Features Every Developer Should Know'
 description: 'Exploring the latest JavaScript features and how they can improve your code quality and development experience.'
-pubDate: '2024-05-15'
-heroImage: 'https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+published: '2024-05-15'
+image: 'https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 category: 'JavaScript'
 tags: ['Web Development', 'JavaScript', 'ES6', 'Programming']
 ---
