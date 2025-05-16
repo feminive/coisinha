@@ -3,26 +3,91 @@ import ThemeToggle from './ThemeToggle.astro';
 import ThemeSelector from './ThemeSelector.astro';
 ---
 
-<header class="py-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-  <div class="flex items-center gap-2">
-    <a href="/" class="text-2xl font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:text-primary-700 dark:hover:text-primary-300">
-      Minimal<span class="text-accent-500">Blog</span>
-    </a>
-  </div>
-  
-  <nav class="flex items-center space-x-6">
-    <a href="/blog" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
-      Blog
-    </a>
-    <a href="/categories" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
-      Categories
-    </a>
-    <a href="/about" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
-      About
-    </a>
-    <div class="flex items-center gap-4">
-      <ThemeSelector />
-      <ThemeToggle />
+<header class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-950 z-40 border-b border-gray-200 dark:border-gray-800">
+  <nav class="max-w-4xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-16">
+      <a href="/" class="relative z-50 text-2xl font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:text-primary-700 dark:hover:text-primary-300">
+        Minimal<span class="text-accent-500">Blog</span>
+      </a>
+      
+      <button
+        id="mobile-menu-button"
+        class="relative z-50 md:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+        aria-label="Toggle menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      
+      <div id="nav-menu" class="fixed md:relative inset-0 md:inset-auto bg-white dark:bg-gray-950 md:bg-transparent z-40 hidden md:block">
+        <div class="h-full md:h-auto flex flex-col md:flex-row items-center justify-center md:justify-end space-y-8 md:space-y-0 md:space-x-6">
+          <a href="/blog" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
+            Blog
+          </a>
+          <a href="/categories" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
+            Categories
+          </a>
+          <a href="/about" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300">
+            About
+          </a>
+          <div class="flex items-center gap-4">
+            <ThemeSelector />
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 </header>
+
+<!-- Spacer to prevent content from being hidden under fixed header -->
+<div class="h-16"></div>
+
+<script>
+  function setupMobileMenu() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const navMenu = document.getElementById('nav-menu');
+    let isMenuOpen = false;
+
+    function toggleMenu() {
+      isMenuOpen = !isMenuOpen;
+      
+      if (navMenu) {
+        navMenu.classList.toggle('hidden');
+      }
+      
+      if (mobileMenuButton) {
+        mobileMenuButton.innerHTML = isMenuOpen
+          ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>'
+          : '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>';
+      }
+
+      // Toggle body scroll
+      document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    }
+
+    mobileMenuButton?.addEventListener('click', toggleMenu);
+
+    // Close menu on window resize if open
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768 && isMenuOpen) {
+        toggleMenu();
+      }
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (event) => {
+      const target = event.target as Node;
+      if (isMenuOpen && navMenu && !navMenu.contains(target) && !mobileMenuButton?.contains(target)) {
+        toggleMenu();
+      }
+    });
+  }
+
+  // Setup on initial load
+  setupMobileMenu();
+
+  // Setup after navigation
+  document.addEventListener('astro:after-swap', setupMobileMenu);
+</script>

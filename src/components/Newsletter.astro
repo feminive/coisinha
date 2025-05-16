@@ -1,0 +1,82 @@
+---
+const { class: className } = Astro.props;
+---
+
+<div class={`bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 py-12 rounded-xl ${className}`}>
+  <div class="max-w-3xl mx-auto text-center space-y-4">
+    <h2 class="text-2xl md:text-3xl font-bold">Stay Updated</h2>
+    <p class="text-gray-700 dark:text-gray-300">
+      Subscribe to our newsletter to receive the latest articles and updates.
+    </p>
+    
+    <form id="newsletter-form" class="mt-6 flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+      <input 
+        type="email" 
+        id="email"
+        name="email"
+        placeholder="Enter your email" 
+        class="flex-grow px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        required
+      />
+      <button 
+        type="submit" 
+        class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-300"
+      >
+        Subscribe
+      </button>
+    </form>
+    
+    <div id="newsletter-message" class="hidden text-sm mt-4"></div>
+    
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
+      We respect your privacy. Unsubscribe at any time.
+    </p>
+  </div>
+</div>
+
+<script>
+  function setupNewsletterForm() {
+    const form = document.getElementById('newsletter-form') as HTMLFormElement;
+    const messageDiv = document.getElementById('newsletter-message');
+    
+    if (!form || !messageDiv) return;
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+      
+      try {
+        const response = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+        
+        const data = await response.json();
+        
+        messageDiv.textContent = data.message || 'Thank you for subscribing!';
+        messageDiv.className = response.ok 
+          ? 'text-green-600 dark:text-green-400' 
+          : 'text-red-600 dark:text-red-400';
+        messageDiv.classList.remove('hidden');
+        
+        if (response.ok) {
+          form.reset();
+        }
+      } catch (error) {
+        messageDiv.textContent = 'An error occurred. Please try again later.';
+        messageDiv.className = 'text-red-600 dark:text-red-400';
+        messageDiv.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Setup on initial load
+  setupNewsletterForm();
+
+  // Setup after navigation
+  document.addEventListener('astro:after-swap', setupNewsletterForm);
+</script>

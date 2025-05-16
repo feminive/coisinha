@@ -1,58 +1,64 @@
+---
+---
+
 <script>
-  // Initialize theme from localStorage or system preference
-  const getInitialTheme = () => {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-      return localStorage.getItem('theme');
+  class ThemeManager {
+    constructor() {
+      this.initializeThemes();
+      this.setupEventListeners();
     }
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+
+    initializeThemes() {
+      // Get initial themes from localStorage or defaults
+      const theme = localStorage.getItem('theme') || 'light';
+      const colorTheme = localStorage.getItem('color-theme') || 'default';
+
+      // Apply themes immediately
+      this.applyTheme(theme);
+      this.applyColorTheme(colorTheme);
+
+      // Make themes available globally
+      window.themeManager = this;
     }
-    return 'light';
-  };
 
-  const getInitialColorTheme = () => {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('color-theme')) {
-      return localStorage.getItem('color-theme');
-    }
-    return 'default'; // blue is default
-  };
-
-  const theme = getInitialTheme();
-  const colorTheme = getInitialColorTheme();
-
-  // Apply the theme and color theme
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-
-  if (colorTheme !== 'default') {
-    document.documentElement.classList.add(`theme-${colorTheme}`);
-  }
-
-  // Make theme data available to other scripts
-  window.theme = { 
-    current: theme,
-    colorTheme: colorTheme,
-    setTheme: (value) => {
-      localStorage.setItem('theme', value);
-      if (value === 'dark') {
+    applyTheme(theme) {
+      if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      window.theme.current = value;
-    },
-    setColorTheme: (value) => {
-      // Remove all theme classes first
-      document.documentElement.classList.remove('theme-purple', 'theme-green', 'theme-red');
-      
-      localStorage.setItem('color-theme', value);
-      if (value !== 'default') {
-        document.documentElement.classList.add(`theme-${value}`);
-      }
-      window.theme.colorTheme = value;
+      localStorage.setItem('theme', theme);
     }
-  };
+
+    applyColorTheme(colorTheme) {
+      document.documentElement.classList.remove('theme-purple', 'theme-green', 'theme-red');
+      if (colorTheme !== 'default') {
+        document.documentElement.classList.add(`theme-${colorTheme}`);
+      }
+      localStorage.setItem('color-theme', colorTheme);
+    }
+
+    toggleTheme() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      this.applyTheme(newTheme);
+    }
+
+    setColorTheme(theme) {
+      this.applyColorTheme(theme);
+    }
+
+    setupEventListeners() {
+      document.addEventListener('astro:after-swap', () => {
+        // Reapply themes after page transitions
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        const currentColorTheme = localStorage.getItem('color-theme') || 'default';
+        this.applyTheme(currentTheme);
+        this.applyColorTheme(currentColorTheme);
+      });
+    }
+  }
+
+  // Initialize theme manager when the script loads
+  new ThemeManager();
 </script>

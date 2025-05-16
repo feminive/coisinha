@@ -1,11 +1,13 @@
+---
+---
+
 <button
   id="theme-toggle"
-  class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+  class="relative z-50 p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
   aria-label="Toggle dark mode"
 >
-  <!-- Sun icon for dark mode -->
+  <!-- Sun icon -->
   <svg
-    id="sun-icon"
     class="w-5 h-5 hidden dark:block"
     fill="currentColor"
     viewBox="0 0 20 20"
@@ -16,9 +18,8 @@
     ></path>
   </svg>
 
-  <!-- Moon icon for light mode -->
+  <!-- Moon icon -->
   <svg
-    id="moon-icon"
     class="w-5 h-5 block dark:hidden"
     fill="currentColor"
     viewBox="0 0 20 20"
@@ -31,10 +32,19 @@
 </button>
 
 <script>
-  const toggleButton = document.getElementById('theme-toggle');
+  function setupThemeToggle() {
+    const toggleButton = document.getElementById('theme-toggle');
+    
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        window.themeManager?.toggleTheme();
+      });
+    }
+  }
 
-  toggleButton?.addEventListener('click', () => {
-    const newTheme = window.theme.current === 'dark' ? 'light' : 'dark';
-    window.theme.setTheme(newTheme);
-  });
+  // Setup on initial load
+  setupThemeToggle();
+
+  // Setup after navigation
+  document.addEventListener('astro:after-swap', setupThemeToggle);
 </script>

@@ -1,17 +1,20 @@
+---
+---
+
 <div class="relative inline-block">
   <button
     id="theme-selector-button"
-    class="flex items-center gap-2 p-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+    class="relative z-50 flex items-center gap-2 p-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
     aria-expanded="false"
     aria-controls="theme-selector-dropdown"
   >
-    <span class="w-4 h-4 rounded-full bg-primary-500 shadow-sm"></span>
+    <span id="theme-indicator" class="w-4 h-4 rounded-full bg-primary-500 shadow-sm"></span>
     <span class="sr-only">Select color theme</span>
   </button>
 
   <div
     id="theme-selector-dropdown"
-    class="absolute right-0 mt-2 w-36 bg-white dark:bg-gray-900 shadow-lg rounded-lg p-2 hidden z-10 border border-gray-200 dark:border-gray-800"
+    class="absolute right-0 mt-2 w-36 bg-white dark:bg-gray-900 shadow-lg rounded-lg p-2 hidden z-50 border border-gray-200 dark:border-gray-800"
   >
     <ul class="space-y-1">
       <li>
@@ -55,54 +58,66 @@
 </div>
 
 <script>
-  const button = document.getElementById('theme-selector-button');
-  const dropdown = document.getElementById('theme-selector-dropdown');
-  const options = document.querySelectorAll('.theme-option');
+  function setupThemeSelector() {
+    const button = document.getElementById('theme-selector-button');
+    const dropdown = document.getElementById('theme-selector-dropdown');
+    const options = document.querySelectorAll('.theme-option');
+    
+    function updateThemeIndicator() {
+      const indicator = document.getElementById('theme-indicator');
+      if (!indicator) return;
 
-  // Update theme indicator
-  const updateThemeIndicator = () => {
-    const indicator = button?.querySelector('span');
-    if (indicator) {
-      if (window.theme.colorTheme === 'default') {
-        indicator.className = 'w-4 h-4 rounded-full bg-blue-500 shadow-sm';
-      } else if (window.theme.colorTheme === 'purple') {
-        indicator.className = 'w-4 h-4 rounded-full bg-purple-500 shadow-sm';
-      } else if (window.theme.colorTheme === 'green') {
-        indicator.className = 'w-4 h-4 rounded-full bg-green-500 shadow-sm';
-      } else if (window.theme.colorTheme === 'red') {
-        indicator.className = 'w-4 h-4 rounded-full bg-red-500 shadow-sm';
-      }
+      const currentTheme = localStorage.getItem('color-theme') || 'default';
+      const colors = {
+        default: 'bg-blue-500',
+        purple: 'bg-purple-500',
+        green: 'bg-green-500',
+        red: 'bg-red-500'
+      };
+
+      indicator.className = `w-4 h-4 rounded-full shadow-sm ${colors[currentTheme]}`;
     }
-  };
 
-  // Show/hide dropdown
-  button?.addEventListener('click', () => {
-    const expanded = button.getAttribute('aria-expanded') === 'true';
-    button.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-    dropdown?.classList.toggle('hidden');
-  });
+    function setupDropdown() {
+      if (!button || !dropdown) return;
 
-  // Handle option clicks
-  options.forEach(option => {
-    option.addEventListener('click', () => {
-      const theme = option.getAttribute('data-theme');
-      if (theme) {
-        window.theme.setColorTheme(theme);
-        updateThemeIndicator();
-        dropdown?.classList.add('hidden');
-        button?.setAttribute('aria-expanded', 'false');
-      }
-    });
-  });
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', (!expanded).toString());
+        dropdown.classList.toggle('hidden');
+      });
 
-  // Close on outside click
-  document.addEventListener('click', (event) => {
-    if (button && dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
-      dropdown.classList.add('hidden');
-      button.setAttribute('aria-expanded', 'false');
+      document.addEventListener('click', (e) => {
+        if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.add('hidden');
+          button.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
-  });
 
-  // Initial theme indicator update
-  updateThemeIndicator();
+    function setupOptions() {
+      options.forEach(option => {
+        option.addEventListener('click', () => {
+          const theme = option.getAttribute('data-theme');
+          if (theme && window.themeManager) {
+            window.themeManager.setColorTheme(theme);
+            updateThemeIndicator();
+            dropdown.classList.add('hidden');
+            button.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+    }
+
+    setupDropdown();
+    setupOptions();
+    updateThemeIndicator();
+  }
+
+  // Setup on initial load
+  setupThemeSelector();
+
+  // Setup after navigation
+  document.addEventListener('astro:after-swap', setupThemeSelector);
 </script>
