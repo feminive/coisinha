@@ -1,12 +1,17 @@
 ---
 import { formatDistance } from 'date-fns';
-import { ptBR } from 'date-fns/locale';  // <-- Faltou ISSO
+import { ptBR } from 'date-fns/locale';  
+import ImageWrapper from './misc/ImageWrapper.astro';
+import { getDir } from "../utils/url-utils";
+import path from 'path';
+
 
 interface Props {
   post: {
     slug: string;
     data: {
       title: string;
+      
       description: string;
       published: Date;
       updatedDate?: Date;
@@ -27,8 +32,7 @@ const formattedDate = formatDistance(
   { addSuffix: true, locale: ptBR }
 );
 
-const defaultImage = "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
-const image = post.data.image || defaultImage;
+const image = post.data.image 
 const readingTimeLocalizated = post.data.readingTime?.replace('min read', 'min de leitura') || '';
 
 ---
@@ -39,13 +43,14 @@ const readingTimeLocalizated = post.data.readingTime?.replace('min read', 'min d
     class={`block ${featured ? 'lg:w-1/2' : ''} overflow-hidden rounded-xl mb-4`}
   >
     <div class="overflow-hidden rounded-xl">
-      <img 
-        src={image} 
-        alt={post.data.title} 
-        class="h-64 w-full object-cover transition-all duration-300 group-hover:scale-105"
-        width="800"
-        height="400"
-      />
+<ImageWrapper
+  src={image ?? ""}
+  alt={post.data.title}
+  class="h-64 w-full object-cover transition-all duration-300 group-hover:scale-105"
+  
+/>
+
+      
     </div>
   </a>
   
@@ -85,7 +90,7 @@ const readingTimeLocalizated = post.data.readingTime?.replace('min read', 'min d
             href={`/tags/${tag.toLowerCase()}`}
             class="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors duration-300"
           >
-            #{tag}
+            {tag}
           </a>
         ))}
       </div>

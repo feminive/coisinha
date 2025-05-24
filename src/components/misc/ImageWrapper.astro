@@ -1,0 +1,74 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  id?: string;
+  src: string;
+  class?: string;
+  width?: string;
+  height?: string;
+  alt?: string;
+  position?: string;
+  basePath?: string;
+  loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
+}
+
+const {
+  id,
+  src,
+  alt,
+  position = "center",
+  basePath = "/",
+  loading = "lazy",
+  fetchpriority = "auto",
+} = Astro.props;
+const className = Astro.props.class;
+
+const isLocal = src.includes("/assets/") && !(
+  src.startsWith("http") ||
+  src.startsWith("https") ||
+  src.startsWith("data:")
+);
+
+let img = src;
+
+if (isLocal) {
+  const files = import.meta.glob("/src/assets/**", {
+    import: "default",
+  });
+
+  const normalizedPath = `/src/assets/${src.replace(/^.*\/assets\//, '')}`;
+
+  const file = files[normalizedPath];
+  if (!file) {
+    console.error(`[ERROR] Image file not found: ${normalizedPath}`);
+  } else {
+    img = await file();
+  }
+}
+---
+
+{isLocal ? (
+  <Image
+    src={img}
+    alt={alt || "Image"}
+    class={className || "w-full h-full object-cover"}
+    style={`object-position: ${position}`}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    width={Astro.props.width || 800}
+    height={Astro.props.height || 600}
+  />
+) : (
+  <img
+    src={img}
+    alt={alt || "Image"}
+    class={className || "w-full h-full object-cover"}
+    style={`object-position: ${position}`}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    width={Astro.props.width || 800}
+    height={Astro.props.height || 600}
+  />
+)}

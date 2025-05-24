@@ -3,6 +3,8 @@ import { formatDistance } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Layout from './Layout.astro';
 import type { CollectionEntry } from 'astro:content';
+import ImageWrapper from '../components/misc/ImageWrapper.astro';
+
 
 type Props = CollectionEntry<'blog'>['data'] & {
   readingTime: string;
@@ -102,13 +104,15 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
       </div>
       
       {image && (
-        <img 
-          src={Heroimage} 
-          alt={title} 
-          class="w-full h-64 sm:h-96 object-cover rounded-xl mb-8"
+
+        <ImageWrapper
+  src={Heroimage ?? ""}
+  alt={title}
+  class="w-full h-64 sm:h-96 object-cover rounded-xl mb-8"
           width="1200"
-          height="600"
-        />
+          height="600"  
+/>
+     
       )}
     </div>
     
@@ -153,7 +157,7 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
               href={`/tags/${tag.toLowerCase()}`}
               class="text-sm px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors duration-300"
             >
-              #{tag}
+              {tag}
             </a>
           ))}
         </div>
