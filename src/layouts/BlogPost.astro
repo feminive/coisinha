@@ -1,5 +1,6 @@
 ---
 import { formatDistance } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import Layout from './Layout.astro';
 import type { CollectionEntry } from 'astro:content';
 
@@ -27,16 +28,20 @@ const {
 const formattedDate = formatDistance(
   new Date(published),
   new Date(),
-  { addSuffix: true }
+  { addSuffix: true, locale: ptBR }
 );
 const formattedUpdatedDate = updatedDate ? formatDistance(
   new Date(updatedDate),
   new Date(),
-  { addSuffix: true }
+  { addSuffix: true, locale: ptBR }
 ) : null;
 
 const defaultImage = "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
 const Heroimage = image || defaultImage;
+const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura');
+
+
+
 ---
 
 <Layout title={title} description={description} image={image}>
@@ -76,7 +81,7 @@ const Heroimage = image || defaultImage;
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <span>Publicado em {formattedDate}</span>
+          <span>Publicado {formattedDate}</span>
         </div>
         
         {updatedDate && (
@@ -84,7 +89,7 @@ const Heroimage = image || defaultImage;
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>Modificado em {formattedUpdatedDate}</span>
+            <span>Modificado {formattedUpdatedDate}</span>
           </div>
         )}
         
@@ -92,7 +97,7 @@ const Heroimage = image || defaultImage;
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>{readingTime}</span>
+          <span>{readingTimeLocalizated}</span>
         </div>
       </div>
       

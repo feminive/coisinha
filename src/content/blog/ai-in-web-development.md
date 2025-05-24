@@ -1,7 +1,7 @@
 ---
 title: 'The Impact of AI on Modern Web Development'
 description: 'Explore how artificial intelligence is transforming web development workflows, tools, and possibilities.'
-published: '2024-05-18'
+published: '2025-05-23'
 image: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
 category: 'Technology'
 tags: ['AI', 'Web Development', 'Technology', 'Programming', 'Future']

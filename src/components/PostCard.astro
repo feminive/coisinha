@@ -1,5 +1,6 @@
 ---
 import { formatDistance } from 'date-fns';
+import { ptBR } from 'date-fns/locale';  // <-- Faltou ISSO
 
 interface Props {
   post: {
@@ -18,15 +19,18 @@ interface Props {
   featured?: boolean;
 }
 
+
 const { post, featured = false } = Astro.props;
 const formattedDate = formatDistance(
   new Date(post.data.published),
   new Date(),
-  { addSuffix: true }
+  { addSuffix: true, locale: ptBR }
 );
 
 const defaultImage = "https://images.pexels.com/photos/3178818/pexels-photo-3178818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
 const image = post.data.image || defaultImage;
+const readingTimeLocalizated = post.data.readingTime?.replace('min read', 'min de leitura') || '';
+
 ---
 
 <article class={`overflow-hidden ${featured ? 'lg:flex gap-8 items-center' : ''} group`}>
@@ -49,7 +53,7 @@ const image = post.data.image || defaultImage;
     <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
       <span>{formattedDate}</span>
       <span class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600"></span>
-      <span>{post.data.readingTime}</span>
+      <span>{readingTimeLocalizated}</span>
       
       {post.data.category && (
         <>
