@@ -2,13 +2,10 @@
 title: 'Eu comi um femboy'
 description: 'Um hétero convicto se vê diante de um femboy provocante e descobre que certos prazeres não precisam de rótulos. O desejo fala mais alto e a noite explode em tesão.'
 published: '2025-05-23'
-image: ../../assets/image/alice.webp
+image: ../../assets/image/femboy.jpg
 category: 'Contos Eróticos'
 tags: ['femboy']
 ---
-
-# The Impact of AI on Modern Web Development
-
 
 E aí, galera, vou contar uma história que aconteceu comigo quando acabei pegando um femboy. Antes de tudo, preciso deixar claro: sempre fui hétero, nunca me interessei por homens. Mas, naquela noite, dei uma deslizada – e, confesso, foi uma das melhores que já tive. Quem nunca, né? Esse conto é narrado do meu ponto de vista, então, se em algum momento parecer meio bruto, já peço desculpas. Vamos lá.
 
