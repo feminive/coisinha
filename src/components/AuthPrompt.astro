@@ -1,0 +1,53 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class={`flex flex-col items-center justify-center text-center p-8 space-y-6 ${className}`}>
+  <h3 class="text-2xl font-bold">Continue Reading with Premium</h3>
+  
+  <p class="text-gray-600 dark:text-gray-400 max-w-md">
+    Subscribe to unlock this article and get unlimited access to all premium content.
+  </p>
+  
+  <div class="flex flex-col sm:flex-row gap-4">
+    <button
+      id="login-button"
+      class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+    >
+      Log In
+    </button>
+    <button
+      id="subscribe-button"
+      class="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 transition-colors"
+    >
+      Subscribe Now
+    </button>
+  </div>
+</div>
+
+<script>
+  function setupAuthButtons() {
+    const loginButton = document.getElementById('login-button');
+    const subscribeButton = document.getElementById('subscribe-button');
+    
+    loginButton?.addEventListener('click', () => {
+      // TODO: Implement login logic
+      console.log('Login clicked');
+    });
+    
+    subscribeButton?.addEventListener('click', () => {
+      // TODO: Implement subscribe logic
+      console.log('Subscribe clicked');
+    });
+  }
+
+  // Setup on initial load
+  setupAuthButtons();
+
+  // Setup after navigation
+  document.addEventListener('astro:after-swap', setupAuthButtons);
+</script>

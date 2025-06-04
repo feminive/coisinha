@@ -4,13 +4,14 @@ import { ptBR } from 'date-fns/locale';
 import Layout from './Layout.astro';
 import type { CollectionEntry } from 'astro:content';
 import ImageWrapper from '../components/misc/ImageWrapper.astro';
-
+import AuthPrompt from '../components/AuthPrompt.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   readingTime: string;
   otherPosts?: CollectionEntry<'blog'>[];
   prevPost?: CollectionEntry<'blog'>;
   nextPost?: CollectionEntry<'blog'>;
+  content: string;
 };
 
 const { 
@@ -24,7 +25,9 @@ const {
   readingTime,
   otherPosts = [],
   prevPost,
-  nextPost
+  nextPost,
+  restricted,
+  content
 } = Astro.props;
 
 const formattedDate = formatDistance(
@@ -32,6 +35,7 @@ const formattedDate = formatDistance(
   new Date(),
   { addSuffix: true, locale: ptBR }
 );
+
 const formattedUpdatedDate = updatedDate ? formatDistance(
   new Date(updatedDate),
   new Date(),
@@ -42,21 +46,28 @@ const defaultImage = "https://images.pexels.com/photos/3178818/pexels-photo-3178
 const Heroimage = image || defaultImage;
 const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura');
 
+// Split content at <!-- more --> if restricted
+let previewContent = content;
+let restrictedContent = '';
 
-
+if (restricted && content.includes('<!-- more -->')) {
+  const [preview, restricted] = content.split('<!-- more -->');
+  previewContent = preview;
+  restrictedContent = restricted;
+}
 ---
 
 <Layout title={title} description={description} image={image}>
-  <!-- Barra de progresso de leitura -->
+  <!-- Reading progress bar -->
   <div id="reading-progress-container" class="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 z-50">
     <div id="reading-progress-bar" class="h-full bg-primary-600 dark:bg-primary-400 w-0 transition-all duration-100"></div>
   </div>
 
-  <!-- Botão voltar ao topo -->
+  <!-- Back to top button -->
   <button 
     id="back-to-top" 
     class="fixed bottom-6 right-6 bg-primary-600 dark:bg-primary-800 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 z-40 hover:bg-primary-700 dark:hover:bg-primary-700 focus:outline-none"
-    aria-label="Voltar ao topo"
+    aria-label="Back to top"
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
@@ -83,7 +94,7 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <span>Publicado {formattedDate}</span>
+          <span>Published {formattedDate}</span>
         </div>
         
         {updatedDate && (
@@ -91,7 +102,7 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>Modificado {formattedUpdatedDate}</span>
+            <span>Modified {formattedUpdatedDate}</span>
           </div>
         )}
         
@@ -104,20 +115,30 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
       </div>
       
       {image && (
-
         <ImageWrapper
-  src={Heroimage ?? ""}
-  alt={title}
-  class="w-full h-64 sm:h-96 object-cover rounded-xl mb-8"
+          src={Heroimage}
+          alt={title}
+          class="w-full h-64 sm:h-96 object-cover rounded-xl mb-8"
           width="1200"
           height="600"  
-/>
-     
+        />
       )}
     </div>
     
     <div class="post-content prose prose-lg dark:prose-invert">
-      <slot />
+      <Fragment set:html={previewContent} />
+      
+      {restricted && restrictedContent && (
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-gray-950 pointer-events-none"></div>
+          <div class="filter blur-sm">
+            <Fragment set:html={restrictedContent} />
+          </div>
+          <div class="absolute inset-0 flex items-end justify-center">
+            <AuthPrompt class="w-full bg-white dark:bg-gray-950 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-sm rounded-lg shadow-xl" />
+          </div>
+        </div>
+      )}
     </div>
     
     {(prevPost || nextPost) && (
@@ -193,7 +214,6 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
   </article>
 
   <script>
-    // Função para atualizar a barra de progresso de leitura
     function updateReadingProgress() {
       const article = document.querySelector('article');
       if (!article) return;
@@ -202,16 +222,13 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
       const documentHeight = document.documentElement.scrollHeight - windowHeight;
       const scrollTop = window.scrollY;
       
-      // Calcula a porcentagem de rolagem
       const scrollPercentage = (scrollTop / documentHeight) * 100;
       
-      // Atualiza a largura da barra de progresso
       const progressBar = document.getElementById('reading-progress-bar');
       if (progressBar) {
         progressBar.style.width = `${Math.min(scrollPercentage, 100)}%`;
       }
       
-      // Mostra ou esconde o botão de voltar ao topo
       const backToTopButton = document.getElementById('back-to-top');
       if (backToTopButton) {
         if (scrollTop > 300) {
@@ -224,7 +241,6 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
       }
     }
     
-    // Função para rolar para o topo da página
     function scrollToTop() {
       window.scrollTo({
         top: 0,
@@ -232,15 +248,10 @@ const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura')
       });
     }
     
-    // Adiciona os event listeners quando o DOM estiver carregado
     document.addEventListener('DOMContentLoaded', () => {
-      // Atualiza a barra de progresso quando a página carrega
       updateReadingProgress();
-      
-      // Atualiza a barra de progresso durante a rolagem
       window.addEventListener('scroll', updateReadingProgress);
       
-      // Configura o botão de voltar ao topo
       const backToTopButton = document.getElementById('back-to-top');
       if (backToTopButton) {
         backToTopButton.addEventListener('click', scrollToTop);

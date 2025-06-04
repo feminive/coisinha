@@ -8,25 +8,20 @@ export async function getStaticPaths() {
     return !data.draft;
   });
   
-  // Sort all posts by date
   const sortedEntries = blogEntries.sort((a, b) => 
     b.data.published.valueOf() - a.data.published.valueOf()
   );
   
   return sortedEntries.map((entry, index) => {
-    // Find posts in the same category
     const categoryPosts = sortedEntries.filter(post => 
       post.data.category === entry.data.category
     );
     
-    // Find current post's index in category posts
     const currentIndex = categoryPosts.findIndex(post => post.slug === entry.slug);
     
-    // Get previous and next posts from the same category
     const prevPost = currentIndex < categoryPosts.length - 1 ? categoryPosts[currentIndex + 1] : undefined;
     const nextPost = currentIndex > 0 ? categoryPosts[currentIndex - 1] : undefined;
     
-    // Find related posts (same category or tags, excluding current post)
     const otherPosts = sortedEntries
       .filter(post => 
         post.slug !== entry.slug && 
@@ -52,7 +47,6 @@ export async function getStaticPaths() {
 const { entry, prevPost, nextPost, otherPosts } = Astro.props;
 const { Content } = await entry.render();
 
-// Calculate reading time
 const stats = readingTime(entry.body);
 ---
 
@@ -62,6 +56,7 @@ const stats = readingTime(entry.body);
   otherPosts={otherPosts}
   prevPost={prevPost}
   nextPost={nextPost}
+  content={entry.body}
 >
   <Content />
 </BlogPost>
