@@ -47,13 +47,13 @@ const Heroimage = image || defaultImage;
 const readingTimeLocalizated = readingTime.replace('min read', 'min de leitura');
 
 // Split content at <!-- more --> if restricted
-let previewContent = content;
+let previewContent = '';
 let restrictedContent = '';
 
 if (restricted && content.includes('<!-- more -->')) {
-  const [preview, restricted] = content.split('<!-- more -->');
-  previewContent = preview;
-  restrictedContent = restricted;
+  [previewContent, restrictedContent] = content.split('<!-- more -->');
+} else {
+  previewContent = content;
 }
 ---
 
@@ -129,13 +129,13 @@ if (restricted && content.includes('<!-- more -->')) {
       <Fragment set:html={previewContent} />
       
       {restricted && restrictedContent && (
-        <div class="relative">
-          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-gray-950 pointer-events-none"></div>
-          <div class="filter blur-sm">
+        <div class="relative mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white dark:via-gray-950/80 dark:to-gray-950 pointer-events-none"></div>
+          <div class="blur-sm">
             <Fragment set:html={restrictedContent} />
           </div>
-          <div class="absolute inset-0 flex items-end justify-center">
-            <AuthPrompt class="w-full bg-white dark:bg-gray-950 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-sm rounded-lg shadow-xl" />
+          <div class="absolute inset-0 flex items-center justify-center">
+            <AuthPrompt class="w-full max-w-lg mx-4 bg-white dark:bg-gray-900 bg-opacity-95 dark:bg-opacity-95 backdrop-blur-sm rounded-xl shadow-2xl" />
           </div>
         </div>
       )}
